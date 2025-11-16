@@ -171,6 +171,20 @@ Contributions are welcome! Here are some areas that could use improvement:
 - Improving UI/UX design
 - Adding backup and restore capabilities
 
+## 📄 Branches and Deployment
+
+This project contains two separate deployment-ready branches:
+
+### Branches:
+- **main**: Contains both versions (localStorage and MongoDB) in a single repository
+- **passmate**: Contains only the localStorage version for deployment
+- **passmate-mongo**: Contains only the MongoDB version for deployment
+
+### Deployment Notes:
+- For localStorage version deployment, use the `passmate` branch
+- For MongoDB version deployment, use the `passmate-mongo` branch
+- Each version has been optimized for its respective deployment target
+
 ## 📄 License
 
 This project is licensed under the ISC License.

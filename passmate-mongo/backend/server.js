@@ -6,7 +6,7 @@ import cors from "cors";
 dotenv.config();
 
 //connecting to MOngoDB client
-const url = process.env.MONGO_URI;
+const url = `${process.env.MONGODB_URI}${process.env.DB_NAME}`;
 const client = new MongoClient(url);
 
 //App and database
