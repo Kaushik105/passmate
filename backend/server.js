@@ -44,10 +44,10 @@ app.get("/", async (req, res) => {
 app.post("/", async (req, res) => {
   try {
     const pass = req.body;
+    delete pass._id;
     const db = client.db(database);
     const collection = db.collection("passwords");
 
-    // Insert the password object (MongoDB will create its own _id)
     const result = await collection.insertOne(pass);
 
     res.status(201).send({ success: true, result: { ...pass, _id: result.insertedId } });
@@ -61,18 +61,17 @@ app.post("/", async (req, res) => {
 app.put("/", async (req, res) => {
   try {
     const pass = req.body;
-    console.log("updating id: ", req.body._id);
     const db = client.db(database);
     const collection = db.collection("passwords");
 
     // Extract the MongoDB ObjectId from the request
     const { _id, ...updateData } = pass;
-    
+
     // Validate the ObjectId
     if (!ObjectId.isValid(_id)) {
       return res.status(400).json({ error: "Invalid ID format", success: false });
     }
-    
+
     const objectId = new ObjectId(_id);
 
     const result = await collection.findOneAndUpdate(
@@ -80,12 +79,12 @@ app.put("/", async (req, res) => {
       { $set: updateData }, // Only update the fields that should change
       { returnDocument: 'after' } // Return the updated document
     );
-    
-    if (!result.value) {
+
+    if (!result) {
       return res.status(404).json({ error: "Password not found", success: false });
     }
 
-    res.send({ success: true, result: result.value });
+    res.send({ success: true, result: result });
   } catch (error) {
     console.error("Error updating password:", error);
     res.status(500).json({ error: "Failed to update password", success: false });
@@ -96,7 +95,6 @@ app.put("/", async (req, res) => {
 app.delete("/", async (req, res) => {
   try {
     const pass = req.body;
-    console.log("deleting from id ", pass);
     const db = client.db(database);
     const collection = db.collection("passwords");
 
@@ -108,7 +106,7 @@ app.delete("/", async (req, res) => {
     // Convert the string ID to ObjectId
     const objectId = new ObjectId(pass._id);
     const result = await collection.deleteOne({ _id: objectId });
-    
+
     if (result.deletedCount === 0) {
       return res.status(404).json({ error: "Password not found", success: false });
     }
@@ -127,5 +125,5 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
+  console.log(`Server is listening on port ${port}`);
 });
